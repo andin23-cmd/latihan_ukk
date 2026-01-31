@@ -14,6 +14,7 @@ anonKey: SupabaseConfig.anonKey,
 );
 
 
+
 runApp(const MyApp());
 }
 

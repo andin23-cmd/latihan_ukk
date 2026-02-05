@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/alat_model.dart';
 import 'detail_alat_screen.dart';
 
+
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
 
@@ -143,21 +144,40 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ],
       ),
 
-      // ===== BOTTOM NAV =====
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        selectedItemColor: const Color(0xFF1A2C22),
-        unselectedItemColor: Colors.grey,
-        onTap: (index) {
-          setState(() => _currentIndex = index);
-        },
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Beranda'),
-          BottomNavigationBarItem(icon: Icon(Icons.inventory), label: 'Barang'),
-          BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'Pesan'),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Pengaturan'),
-        ],
-      ),
+      // ===== BOTTOM NAVIGATION =====
+        bottomNavigationBar: BottomNavigationBar(
+currentIndex: _currentIndex,
+
+// AGAR LABEL TIDAK HILANG
+type: BottomNavigationBarType.fixed,
+showUnselectedLabels: true,
+
+selectedItemColor: const Color(0xFF1A2C22),
+unselectedItemColor: Colors.grey,
+
+onTap: (index) {
+setState(() => _currentIndex = index);
+},
+
+items: const [
+BottomNavigationBarItem(
+icon: Icon(Icons.home),
+label: 'Beranda',
+),
+BottomNavigationBarItem(
+icon: Icon(Icons.inventory),
+label: 'Alat',
+),
+BottomNavigationBarItem(
+icon: Icon(Icons.chat),
+label: 'Pesan',
+),
+BottomNavigationBarItem(
+icon: Icon(Icons.settings),
+label: 'Pengaturan',
+),
+],
+),
     );
   }
 
@@ -227,3 +247,4 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 }
+

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/screens/beranda_screen.dart';
+import 'package:flutter_application_1/screens/pinjam_screen.dart';
+
+
 
 class DetailAlatScreen extends StatelessWidget {
   final Map alat;
@@ -136,7 +138,7 @@ class DetailAlatScreen extends StatelessWidget {
   Navigator.push(
     context,
     MaterialPageRoute(
-      builder: (_) => const DashboardScreen(),
+      builder: (_) => const PesananScreen(),
     ),
   );
 },

@@ -1,92 +1,109 @@
 import 'package:flutter/material.dart';
 import 'services/supabase_service.dart';
+
 import 'package:flutter_application_1/screens/admin_beranda.dart';
 import 'package:flutter_application_1/screens/petugas_beranda.dart';
 import 'package:flutter_application_1/screens/peminjam_screen.dart';
 
-void login() async {
-  try {
-    setState(() => isLoading = true);
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
-    final supabase = service.client;
-
-    // ================= LOGIN AUTH =================
-    final authRes = await supabase.auth.signInWithPassword(
-      email: emailController.text.trim(),
-      password: passwordController.text.trim(),
-    );
-
-    final user = authRes.user;
-
-    if (user == null) {
-      throw Exception('Auth gagal');
-    }
-
-    // ================= AMBIL PROFIL =================
-    final profil = await supabase
-        .from('profil')
-        .select()
-        .eq('id', user.id)
-        .maybeSingle();
-
-    setState(() => isLoading = false);
-
-    if (!mounted) return;
-
-    // ================= CEK PROFIL =================
-    if (profil == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Login gagal. User tidak ditemukan di tabel profil.',
-          ),
-        ),
-      );
-      return;
-    }
-
-    String role = profil['role'];
-
-    // ================= NAVIGASI ROLE =================
-    if (role == 'admin') {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => const AdminBeranda(),
-        ),
-      );
-    } 
-    else if (role == 'petugas') {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => const PetugasBeranda(),
-        ),
-      );
-    } 
-    else {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => const DashboardScreen(),
-        ),
-      );
-    }
-
-  } catch (e) {
-    setState(() => isLoading = false);
-
-    print('ERROR LOGIN UI: $e');
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Terjadi error: $e'),
-      ),
-    );
-  }
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-  // ================= UI (TIDAK DIUBAH) =================
+class _LoginScreenState extends State<LoginScreen> {
+  final SupabaseService service = SupabaseService();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  bool isLoading = false;
+  bool _obscurePassword = true;
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> login() async {
+    try {
+      setState(() => isLoading = true);
+
+      final supabase = service.supabase;
+
+      // ================= LOGIN AUTH =================
+      final authRes = await supabase.auth.signInWithPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
+
+      final user = authRes.user;
+
+      if (user == null) {
+        throw Exception('Login gagal');
+      }
+
+      // ================= AMBIL DATA USERS =================
+      final data = await supabase
+          .from('users')
+          .select()
+          .eq('id', user.id)
+          .maybeSingle();
+
+      setState(() => isLoading = false);
+
+      if (!mounted) return;
+
+      if (data == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'User tidak ditemukan di tabel users',
+            ),
+          ),
+        );
+        return;
+      }
+
+      final String role = data['role'] ?? '';
+
+      // ================= REDIRECT ROLE =================
+      if (role == 'admin') {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const AdminAlatScreen()),
+        );
+      } else if (role == 'petugas') {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const PetugasBeranda()),
+        );
+      } else if (role == 'peminjam') {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const DashboardScreen()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Role tidak dikenali'),
+          ),
+        );
+      }
+    } catch (e) {
+      setState(() => isLoading = false);
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Terjadi error: $e')),
+      );
+    }
+  }
+
+  // ================= UI =================
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -112,7 +129,9 @@ void login() async {
                   fontWeight: FontWeight.bold,
                 ),
               ),
+
               const SizedBox(height: 6),
+
               const Text(
                 'Selamat datang',
                 style: TextStyle(color: Colors.white70),
@@ -177,9 +196,7 @@ void login() async {
                     ),
                   ),
                   child: isLoading
-                      ? const CircularProgressIndicator(
-                          color: Colors.white,
-                        )
+                      ? const CircularProgressIndicator(color: Colors.white)
                       : const Text(
                           'Masuk',
                           style: TextStyle(
@@ -197,3 +214,4 @@ void login() async {
       ),
     );
   }
+}

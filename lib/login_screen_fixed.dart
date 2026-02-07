@@ -66,7 +66,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (role == 'admin') {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const AdminBeranda()),
+          MaterialPageRoute(builder: (_) => const AdminAlatScreen()),
         );
       } else if (role == 'petugas') {
         Navigator.pushReplacement(

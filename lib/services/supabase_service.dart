@@ -31,4 +31,4 @@ class SupabaseService {
       return null;
     }
   }
-}
+} // angfay

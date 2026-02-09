@@ -159,17 +159,6 @@ Column(
                     ),
                   ],
                 ),
-                const SizedBox(height: 28),
-
-                // ===== AKTIVITAS =====
-                const Text(
-                  "Aktivitas Petugas",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
 
                 const SizedBox(height: 16),
 
@@ -188,7 +177,7 @@ Column(
 
                 const SizedBox(height: 28),
 
-                // ===== AKTIVITAS =====
+               
                 const Text(
                   "Aktivitas Peminjam",
                   style: TextStyle(
@@ -209,7 +198,7 @@ Column(
                   "10 menit lalu",
                 ),
                 _aktivitasItem(
-                  "Joko meminjam Headphone",
+                  "Joko telah logout",
                   "1 jam lalu",
                 ),
               ],
@@ -220,7 +209,7 @@ Column(
     );
   }
 
-  // ===== CARD STATISTIK =====
+ 
   Widget _cardStatistik({
     required String title,
     required String value,
@@ -259,47 +248,6 @@ Column(
             ],
           ),
         ],
-      ),
-    );
-  }
-
-  // ===== MENU CARD =====
-  Widget _menuCard({
-    required String title,
-    required IconData icon,
-    required Color color,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFF1F3D2B),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: () {},
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.2),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(icon, color: color, size: 26),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w500,
-                fontSize: 13,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

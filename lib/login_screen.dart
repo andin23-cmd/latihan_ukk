@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'services/supabase_service.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-import 'package:flutter_application_1/screens/admin_beranda.dart';
+import 'package:flutter_application_1/screens/main_navigator_admin.dart';
 import 'package:flutter_application_1/screens/petugas_beranda.dart';
 import 'package:flutter_application_1/screens/peminjam_screen.dart';
 
@@ -73,7 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (role == 'admin') {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const AdminAlatScreen()),
+          MaterialPageRoute(builder: (_) => const MainAdminScreen()),
         );
       } else if (role == 'petugas') {
         Navigator.pushReplacement(
@@ -92,15 +93,36 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         );
       }
-    } catch (e) {
-      setState(() => isLoading = false);
+    } on AuthException catch (e) {
+  setState(() => isLoading = false);
 
-      if (!mounted) return;
+  if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Terjadi error: $e')),
-      );
-    }
+  String message = '';
+
+  // ================= CEK JENIS ERROR =================
+  if (e.message.contains('Invalid login credentials')) {
+    message = 'Email atau kata sandi salah';
+  } else if (e.message.contains('Email not confirmed')) {
+    message = 'Email belum dikonfirmasi';
+  } else {
+    message = e.message; // default dari supabase
+  }
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text(message)),
+  );
+
+} catch (e) {
+  setState(() => isLoading = false);
+
+  if (!mounted) return;
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text('Terjadi kesalahan sistem')),
+  );
+}
+
   }
 
   // ================= UI =================
@@ -122,7 +144,7 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 20),
 
               const Text(
-                'E-Cashier',
+                'Pinjam Alat',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 26,

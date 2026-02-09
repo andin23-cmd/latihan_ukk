@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart'; // ← WAJIB untuk AuthException
 import 'services/supabase_service.dart';
-import 'package:flutter_application_1/screens/admin_beranda.dart';
+
+import 'package:flutter_application_1/screens/main_navigator_admin.dart';
 import 'package:flutter_application_1/screens/petugas_beranda.dart';
 import 'package:flutter_application_1/screens/peminjam_screen.dart';
 
@@ -18,6 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   bool isLoading = false;
   bool _obscurePassword = true;
+  String? errorMessage;
 
   @override
   void dispose() {
@@ -26,10 +29,14 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
+  // ================= LOGIN FUNCTION =================
   Future<void> login() async {
-    try {
-      setState(() => isLoading = true);
+    setState(() {
+      isLoading = true;
+      errorMessage = null; // reset error lama
+    });
 
+    try {
       final supabase = service.supabase;
 
       final authRes = await supabase.auth.signInWithPassword(
@@ -39,34 +46,35 @@ class _LoginScreenState extends State<LoginScreen> {
 
       final user = authRes.user;
       if (user == null) {
-        throw Exception('Auth gagal');
+        throw const AuthException('Invalid login credentials');
       }
 
+      // ================= AMBIL PROFIL =================
       final profil = await supabase
           .from('profil')
           .select()
           .eq('id', user.id)
           .maybeSingle();
 
-      setState(() => isLoading = false);
-
       if (!mounted) return;
 
       if (profil == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Login gagal. User tidak ditemukan di tabel profil.'),
-          ),
-        );
+        setState(() {
+          isLoading = false;
+          errorMessage = 'User tidak ditemukan di tabel profil';
+        });
         return;
       }
 
       final String role = profil['role'] ?? '';
 
+      setState(() => isLoading = false);
+
+      // ================= REDIRECT ROLE =================
       if (role == 'admin') {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const AdminAlatScreen()),
+          MaterialPageRoute(builder: (_) => const MainAdminScreen()),
         );
       } else if (role == 'petugas') {
         Navigator.pushReplacement(
@@ -79,16 +87,33 @@ class _LoginScreenState extends State<LoginScreen> {
           MaterialPageRoute(builder: (_) => const DashboardScreen()),
         );
       }
-    } catch (e) {
-      setState(() => isLoading = false);
-      print('ERROR LOGIN UI: $e');
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Terjadi error: $e')),
-      );
+    }
+
+    // ================= ERROR AUTH =================
+    on AuthException catch (e) {
+      setState(() {
+        isLoading = false;
+
+        if (e.message.contains('Invalid login credentials')) {
+          errorMessage = 'Email atau kata sandi salah';
+        } else if (e.message.contains('Email not confirmed')) {
+          errorMessage = 'Email belum dikonfirmasi';
+        } else {
+          errorMessage = e.message;
+        }
+      });
+    }
+
+    // ================= ERROR UMUM =================
+    catch (e) {
+      setState(() {
+        isLoading = false;
+        errorMessage = 'Terjadi kesalahan sistem';
+      });
     }
   }
 
+  // ================= UI =================
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -114,7 +139,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
+
               const SizedBox(height: 6),
+
               const Text(
                 'Selamat datang',
                 style: TextStyle(color: Colors.white70),
@@ -122,6 +149,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
               const SizedBox(height: 30),
 
+              // ================= EMAIL =================
               TextField(
                 controller: emailController,
                 decoration: InputDecoration(
@@ -138,6 +166,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
               const SizedBox(height: 14),
 
+              // ================= PASSWORD =================
               TextField(
                 controller: passwordController,
                 obscureText: _obscurePassword,
@@ -148,7 +177,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   hintText: 'Kata sandi',
                   suffixIcon: IconButton(
                     icon: Icon(
-                      _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                      _obscurePassword
+                          ? Icons.visibility_off
+                          : Icons.visibility,
                     ),
                     onPressed: () {
                       setState(() {
@@ -163,8 +194,31 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
 
-              const SizedBox(height: 30),
+              const SizedBox(height: 14),
 
+              // ================= ERROR MESSAGE =================
+              if (errorMessage != null)
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.red.shade100,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    errorMessage!,
+                    style: const TextStyle(
+                      color: Colors.red,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+
+              const SizedBox(height: 20),
+
+              // ================= BUTTON =================
               SizedBox(
                 width: double.infinity,
                 height: 48,
@@ -180,7 +234,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       ? const CircularProgressIndicator(color: Colors.white)
                       : const Text(
                           'Masuk',
-                          style: TextStyle(fontSize: 16, color: Colors.white),
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.white,
+                          ),
                         ),
                 ),
               ),

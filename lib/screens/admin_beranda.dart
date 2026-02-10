@@ -6,182 +6,142 @@ class BerandaAdminScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+      backgroundColor: const Color(0xFFF4F6F8),
 
-      // ===== APPBAR KOSONG =====
       appBar: AppBar(
-        backgroundColor:Color(0xFF1F3D2B),
+        backgroundColor: Colors.transparent,
         elevation: 0,
+        toolbarHeight: 0,
       ),
 
       body: ListView(
         children: [
 
-          // ===== HEADER PROFIL + NOTIF =====
+          // ===== HEADER =====
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 34),
+            padding: const EdgeInsets.fromLTRB(20, 40, 20, 30),
             decoration: const BoxDecoration(
-              color: Color(0xFF1F3D2B),
+              gradient: LinearGradient(
+                colors: [
+                  Color(0xFF1F3D2B),
+                  Color(0xFF2E5E44),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
               borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(24),
-                bottomRight: Radius.circular(24),
+                bottomLeft: Radius.circular(28),
+                bottomRight: Radius.circular(28),
               ),
             ),
             child: Row(
               children: [
-
-                // FOTO PROFIL
                 const CircleAvatar(
-                  radius: 22,
+                  radius: 24,
                   backgroundImage: AssetImage("assets/profile.png"),
                 ),
 
                 const SizedBox(width: 12),
 
-                // TEXT
-                 // TEXT
-Column(
-  crossAxisAlignment: CrossAxisAlignment.start,
-  children: const [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    Text(
+                      "Selamat Datang 👋",
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 14,
+                      ),
+                    ),
+                    Text(
+                      "Admin Dashboard",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
 
-    Text(
-      "Selamat Datang, Admin 👋",
-      style: TextStyle(
-        color: Color.fromARGB(255, 255, 255, 255),
-        fontSize: 16,
-        fontWeight: FontWeight.bold,
-      ),
-    ),
+                const Spacer(),
 
-    SizedBox(height: 4),
-
-    Text(
-      "Dashboard Sistem Peminjaman Alat",
-      style: TextStyle(
-        color: Color.fromARGB(137, 255, 255, 255),
-      ),
-    ),
-
-  ],
-),
-
-                // ICON NOTIF
-    const SizedBox(width: 50),
-
-    // ICON NOTIFIKASI
-    IconButton(
-      onPressed: () {},
-      icon: const Icon(
-        Icons.notifications_none,
-        color: Colors.white,
-      ),
-    ),
+                IconButton(
+                  onPressed: () {},
+                  icon: const Icon(
+                    Icons.notifications_none,
+                    color: Colors.white,
+                  ),
+                ),
               ],
             ),
           ),
 
-          // ===== ISI DASHBOARD =====
+          // ===== CONTENT =====
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
 
-                // SAPAAN
-                
-                const SizedBox(height: 20),
-
                 // SEARCH
-                SizedBox(
-                  height: 48,
-                  child: TextField(
-                    style: const TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      hintText: "Cari data...",
-                      hintStyle: const TextStyle(color: Colors.white70),
-                      prefixIcon: const Icon(Icons.search),
-                      prefixIconColor: Colors.white,
-                      filled: true,
-                      fillColor: const Color(0xFF1F3D2B),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
-                      ),
+                TextField(
+                  decoration: InputDecoration(
+                    hintText: "Cari data...",
+                    prefixIcon: const Icon(Icons.search),
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: BorderSide.none,
                     ),
                   ),
                 ),
 
-                const SizedBox(height: 20),
+                const SizedBox(height: 24),
 
                 // ===== STATISTIK =====
-                Row(
-                  children: [
-                    Expanded(
-                      child: _cardStatistik(
-                        title: "Total Alat",
-                        value: "120",
-                        icon: Icons.inventory_2_outlined,
-                        color: Colors.blue,
-                      ),
+                GridView.count(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                  childAspectRatio: 1.6,
+                  children: const [
+                    _StatCard(
+                      title: "Total Alat",
+                      value: "120",
+                      icon: Icons.inventory_2_outlined,
+                      color: Colors.blue,
                     ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: _cardStatistik(
-                        title: "Total User",
-                        value: "45",
-                        icon: Icons.people_outline,
-                        color: Colors.purple,
-                      ),
+                    _StatCard(
+                      title: "Total User",
+                      value: "45",
+                      icon: Icons.people_outline,
+                      color: Colors.purple,
                     ),
-                  ],
-                ),
-
-                const SizedBox(height: 12),
-
-                Row(
-                  children: [
-                    Expanded(
-                      child: _cardStatistik(
-                        title: "Dipinjam",
-                        value: "35",
-                        icon: Icons.handshake_outlined,
-                        color: Colors.orange,
-                      ),
+                    _StatCard(
+                      title: "Dipinjam",
+                      value: "35",
+                      icon: Icons.handshake_outlined,
+                      color: Colors.orange,
                     ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: _cardStatistik(
-                        title: "Pengembalian",
-                        value: "12",
-                        icon: Icons.keyboard_return,
-                        color: Colors.green,
-                      ),
+                    _StatCard(
+                      title: "Pengembalian",
+                      value: "12",
+                      icon: Icons.keyboard_return,
+                      color: Colors.green,
                     ),
                   ],
                 ),
 
-                const SizedBox(height: 16),
+                const SizedBox(height: 30),
 
-                _aktivitasItem(
-                  "Andin memnyetujui peminjaman Laptop",
-                  "2 menit lalu",
-                ),
-                _aktivitasItem(
-                  "Budi menolak Proyektor",
-                  "10 menit lalu",
-                ),
-                _aktivitasItem(
-                  "Dian telah logout",
-                  "1 jam lalu",
-                ),
-
-                const SizedBox(height: 28),
-
-               
+                // ===== AKTIVITAS =====
                 const Text(
-                  "Aktivitas Peminjam",
+                  "Aktivitas Terbaru",
                   style: TextStyle(
-                    color: Colors.black,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -190,62 +150,25 @@ Column(
                 const SizedBox(height: 16),
 
                 _aktivitasItem(
-                  "Andin meminjam Laptop",
-                  "2 menit lalu",
+                  icon: Icons.check_circle,
+                  color: Colors.green,
+                  title: "Andin menyetujui Laptop",
+                  time: "2 menit lalu",
                 ),
                 _aktivitasItem(
-                  "Budi mengembalikan Proyektor",
-                  "10 menit lalu",
+                  icon: Icons.cancel,
+                  color: Colors.red,
+                  title: "Budi menolak Proyektor",
+                  time: "10 menit lalu",
                 ),
                 _aktivitasItem(
-                  "Joko telah logout",
-                  "1 jam lalu",
+                  icon: Icons.logout,
+                  color: Colors.orange,
+                  title: "Dian logout",
+                  time: "1 jam lalu",
                 ),
               ],
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
- 
-  Widget _cardStatistik({
-    required String title,
-    required String value,
-    required IconData icon,
-    required Color color,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFF1F3D2B),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(icon, color: color),
-          ),
-          const SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, style: const TextStyle(color: Colors.white70)),
-              Text(
-                value,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
           ),
         ],
       ),
@@ -253,32 +176,101 @@ Column(
   }
 
   // ===== AKTIVITAS ITEM =====
-  Widget _aktivitasItem(String title, String time) {
+  Widget _aktivitasItem({
+    required IconData icon,
+    required Color color,
+    required String title,
+    required String time,
+  }) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: 14),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFF1F3D2B),
-        borderRadius: BorderRadius.circular(12),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Row(
         children: [
-          const Icon(Icons.history, color: Colors.white70),
+          CircleAvatar(
+            backgroundColor: color.withOpacity(0.15),
+            child: Icon(icon, color: color),
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: const TextStyle(color: Colors.white)),
+                Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
+                const SizedBox(height: 4),
                 Text(
                   time,
-                  style: const TextStyle(
-                    color: Colors.white54,
-                    fontSize: 12,
-                  ),
+                  style: const TextStyle(fontSize: 12, color: Colors.grey),
                 ),
               ],
             ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ===== STAT CARD =====
+class _StatCard extends StatelessWidget {
+  final String title;
+  final String value;
+  final IconData icon;
+  final Color color;
+
+  const _StatCard({
+    required this.title,
+    required this.value,
+    required this.icon,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 10,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            backgroundColor: color.withOpacity(0.15),
+            child: Icon(icon, color: color),
+          ),
+          const SizedBox(width: 12),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(title, style: const TextStyle(color: Colors.grey)),
+              Text(
+                value,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
         ],
       ),

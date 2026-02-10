@@ -14,6 +14,7 @@ class SupabaseService {
             stok,
             kondisi,
             status,
+            gambar_url,
             jangka_waktu,
             kategori (
               nama_kategori

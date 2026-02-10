@@ -79,7 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
       } else if (role == 'petugas') {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const PetugasBeranda()),
+          MaterialPageRoute(builder: (_) => const BerandaPetugasPage()),
         );
       } else {
         Navigator.pushReplacement(

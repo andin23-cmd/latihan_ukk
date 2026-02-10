@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/screens/main_navigator_petugas.dart';
 import 'services/supabase_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -79,14 +80,14 @@ class _LoginScreenState extends State<LoginScreen> {
       } else if (role == 'petugas') {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const PetugasBeranda()),
+          MaterialPageRoute(builder: (_) => const BerandaPetugasPage()),
         );
-      } else if (role == 'peminjam') {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const DashboardScreen()),
-        );
-      } else {
+      } else if (role == 'petugas') {
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(builder: (_) => const MainNavigatorPetugas()),
+  );
+} else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Role tidak dikenali'),

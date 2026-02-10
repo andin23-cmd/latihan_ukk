@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_application_1/login_screen.dart';
@@ -9,14 +8,19 @@ class PengaturanScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF0F2F1F),
+
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0F2F1F),
+        backgroundColor: Colors.transparent,
         elevation: 0,
+        title: const Text(
+          "Pengaturan",
+          style: TextStyle(fontWeight: FontWeight.w600),
+        ),
+        centerTitle: true,
       ),
 
       body: Container(
-        width: double.infinity,
-        height: double.infinity,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
@@ -30,42 +34,48 @@ class PengaturanScreen extends StatelessWidget {
 
         child: Column(
           children: [
+
             const SizedBox(height: 30),
 
-            // ===== FOTO =====
+            // ===== AVATAR =====
             Stack(
               children: [
-                CircleAvatar(
-                  radius: 60,
-                  backgroundColor: Colors.amber,
+                Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white24,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.3),
+                        blurRadius: 12,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
+                  ),
                   child: const CircleAvatar(
-                    radius: 55,
-                    backgroundImage: AssetImage(
-                      "assets/profile.png",
-                    ),
+                    radius: 58,
+                    backgroundImage: AssetImage("assets/profile.png"),
                   ),
                 ),
 
                 Positioned(
-                  bottom: 0,
-                  right: 0,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
-                      shape: BoxShape.circle,
-                    ),
-                    padding: const EdgeInsets.all(8),
+                  bottom: 6,
+                  right: 6,
+                  child: CircleAvatar(
+                    radius: 18,
+                    backgroundColor: Colors.white,
                     child: const Icon(
-                      Icons.camera_alt,
-                      size: 20,
-                      color: Colors.black87,
+                      Icons.edit,
+                      size: 18,
+                      color: Color(0xFF0F2F1F),
                     ),
                   ),
-                )
+                ),
               ],
             ),
 
-            const SizedBox(height: 15),
+            const SizedBox(height: 16),
 
             const Text(
               "Admin",
@@ -76,7 +86,7 @@ class PengaturanScreen extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 5),
+            const SizedBox(height: 4),
 
             const Text(
               "admin@gmail.com",
@@ -88,88 +98,38 @@ class PengaturanScreen extends StatelessWidget {
 
             const SizedBox(height: 30),
 
-            _menuItem(icon: Icons.person, title: "Ubah Profil"),
-            _menuItem(icon: Icons.lock, title: "Ganti Akun"),
-            _menuItem(icon: Icons.calendar_today, title: "Riwayat"),
+            // ===== MENU =====
+            _menuItem(icon: Icons.person_outline, title: "Ubah Profil"),
+            _menuItem(icon: Icons.switch_account_outlined, title: "Ganti Akun"),
+            _menuItem(icon: Icons.history, title: "Riwayat Aktivitas"),
 
             const Spacer(),
 
-            // ===== BUTTON LOGOUT =====
+            // ===== LOGOUT =====
             Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20,
-                vertical: 20,
-              ),
+              padding: const EdgeInsets.all(20),
               child: GestureDetector(
-                onTap: () async {
-
-  // ===== DIALOG KONFIRMASI =====
-  showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15),
-      ),
-
-      title: const Text("Konfirmasi"),
-      content: const Text("Anda yakin ingin keluar?"),
-
-      actions: [
-
-        // ===== TOMBOL TIDAK =====
-        TextButton(
-          onPressed: () {
-            Navigator.pop(context); // tutup dialog
-          },
-          child: const Text("Tidak"),
-        ),
-
-        // ===== TOMBOL YA =====
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF0F2F1F),
-            foregroundColor: Colors.white,
-          ),
-          onPressed: () async {
-
-            // Logout Supabase
-            await Supabase.instance.client.auth.signOut();
-
-            // Pindah ke Login & hapus semua halaman
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const LoginScreen(),
-              ),
-              (route) => false,
-            );
-          },
-          child: const Text("Ya"),
-        ),
-      ],
-    ),
-  );
-
-},
-
-
+                onTap: () => _showLogoutDialog(context),
                 child: Container(
-                  width: double.infinity,
                   padding: const EdgeInsets.symmetric(vertical: 15),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
+                    color: Colors.red.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(
+                      color: Colors.red.withOpacity(0.4),
+                    ),
                   ),
                   child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.logout, color: Colors.white),
+                      Icon(Icons.logout, color: Colors.redAccent),
                       SizedBox(width: 10),
                       Text(
                         "Keluar",
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Colors.redAccent,
                           fontSize: 16,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ],
@@ -183,43 +143,82 @@ class PengaturanScreen extends StatelessWidget {
     );
   }
 
+  // ===== DIALOG LOGOUT =====
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        title: const Text("Konfirmasi"),
+        content: const Text("Anda yakin ingin keluar dari akun ini?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Batal"),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.redAccent,
+              foregroundColor: Colors.white,
+            ),
+            onPressed: () async {
+              await Supabase.instance.client.auth.signOut();
+
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const LoginScreen(),
+                ),
+                (route) => false,
+              );
+            },
+            child: const Text("Keluar"),
+          ),
+        ],
+      ),
+    );
+  }
+
   // ===== MENU ITEM =====
-  static Widget _menuItem({
+  Widget _menuItem({
     required IconData icon,
     required String title,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 20,
-        vertical: 8,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 15,
-          vertical: 15,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         decoration: BoxDecoration(
           color: Colors.white.withOpacity(0.08),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.15),
+              blurRadius: 10,
+              offset: const Offset(0, 6),
+            ),
+          ],
         ),
         child: Row(
           children: [
             Icon(icon, color: Colors.white),
-            const SizedBox(width: 15),
+            const SizedBox(width: 16),
             Expanded(
               child: Text(
                 title,
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 15,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ),
             const Icon(
-              Icons.arrow_forward_ios,
+              Icons.chevron_right,
               color: Colors.white70,
-              size: 16,
-            )
+            ),
           ],
         ),
       ),

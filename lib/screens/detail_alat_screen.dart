@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/screens/pinjam_screen.dart';
 
-
-
 class DetailAlatScreen extends StatelessWidget {
-  final Map alat;
+  final Map<String, dynamic> alat;
 
   const DetailAlatScreen({super.key, required this.alat});
 
   @override
   Widget build(BuildContext context) {
-    // ✅ AMANKAN DATA
+    // ===== AMANKAN DATA =====
     final String namaAlat = alat['nama_alat'] ?? 'Nama tidak tersedia';
     final int stok = alat['stok'] ?? 0;
+    final int jangkaWaktu = alat['jangka_waktu'] ?? 1;
+    final String? gambarUrl = alat['gambar_url'];
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -33,10 +33,20 @@ class DetailAlatScreen extends StatelessWidget {
           // ===== GAMBAR =====
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Image.asset(
-              'assets/images/headphone.png', // pastikan path benar
-              height: 220,
-              fit: BoxFit.contain,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: gambarUrl != null
+                  ? Image.network(
+                      gambarUrl,
+                      height: 220,
+                      width: double.infinity,
+                      fit: BoxFit.contain,
+                    )
+                  : Image.asset(
+                      'assets/images/headphone.png',
+                      height: 220,
+                      fit: BoxFit.contain,
+                    ),
             ),
           ),
 
@@ -46,7 +56,7 @@ class DetailAlatScreen extends StatelessWidget {
           Expanded(
             child: Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(2),
+              padding: const EdgeInsets.all(16),
               decoration: const BoxDecoration(
                 color: Color(0xFF1A2C22),
                 borderRadius: BorderRadius.vertical(
@@ -56,7 +66,7 @@ class DetailAlatScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // JUDUL
+                  // ===== JUDUL =====
                   Text(
                     namaAlat,
                     style: const TextStyle(
@@ -67,7 +77,7 @@ class DetailAlatScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Stok $stok',
+                    'Stok tersedia: $stok',
                     style: const TextStyle(color: Colors.grey),
                   ),
 
@@ -75,38 +85,24 @@ class DetailAlatScreen extends StatelessWidget {
                   const Divider(color: Colors.grey),
                   const SizedBox(height: 12),
 
-                  // ATURAN
-                  Row(
-                    children: const [
-                      Icon(Icons.warning_amber_rounded,
-                          color: Colors.grey, size: 18),
-                      SizedBox(width: 8),
-                      Text('Jangan di jual',
-                          style: TextStyle(color: Colors.grey)),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: const [
-                      Icon(Icons.warning_amber_rounded,
-                          color: Colors.grey, size: 18),
-                      SizedBox(width: 8),
-                      Text('Jangan merusak barang',
-                          style: TextStyle(color: Colors.grey)),
-                    ],
-                  ),
+                  // ===== ATURAN =====
+                  _aturan('Jangan dijual'),
+                  _aturan('Jangan merusak barang'),
+                  _aturan('Kembalikan tepat waktu'),
 
                   const Spacer(),
 
-                  // ===== FOOTER =====
+                  // ===== JANGKA PINJAM =====
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Text('Jangka Pinjam',
-                          style: TextStyle(color: Colors.grey)),
+                    children: [
+                      const Text(
+                        'Jangka Pinjam',
+                        style: TextStyle(color: Colors.grey),
+                      ),
                       Text(
-                        '3 Hari',
-                        style: TextStyle(
+                        '$jangkaWaktu Hari',
+                        style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
@@ -122,7 +118,7 @@ class DetailAlatScreen extends StatelessWidget {
                     height: 48,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFFFFC107),
+                        backgroundColor: const Color(0xFFFFC107),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -134,19 +130,44 @@ class DetailAlatScreen extends StatelessWidget {
                           color: Colors.black,
                         ),
                       ),
-                      onPressed: () {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (_) => const PesananScreen(),
-    ),
-  );
-},
+                      onPressed: stok <= 0
+                          ? null
+                          : () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => PesananScreen(
+                                    alat: alat,
+                                  ),
+                                ),
+                              );
+                            },
                     ),
                   ),
                 ],
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ===== WIDGET ATURAN =====
+  Widget _aturan(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        children: [
+          const Icon(
+            Icons.warning_amber_rounded,
+            color: Colors.grey,
+            size: 18,
+          ),
+          const SizedBox(width: 8),
+          Text(
+            text,
+            style: const TextStyle(color: Colors.grey),
           ),
         ],
       ),

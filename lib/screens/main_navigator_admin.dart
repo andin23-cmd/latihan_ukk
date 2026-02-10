@@ -11,14 +11,36 @@ class MainAdminScreen extends StatefulWidget {
 }
 
 class _MainAdminScreenState extends State<MainAdminScreen> {
+  // index halaman yang aktif
   int _selectedIndex = 0;
 
+  // list halaman, urutannya harus sama dengan BottomNavigationBarItem
   final List<Widget> _pages = [
-    const BerandaAdminScreen(),
-    const AdminAlatScreen(),
-    const Center(child: Text("Halaman Aktivitas")),
-    const Center(child: Text("Halaman User")),
-    const PengaturanScreen(), // pastikan class ini ada
+    const BerandaAdminScreen(),                   // 0
+    const AdminAlatScreen(),                      // 1
+    const Center(child: Text("Halaman Aktivitas")), // 2
+          // 3, bisa dihapus kalau tidak perlu
+    const PengaturanScreen(),                     // 4
+  ];
+
+  // list BottomNavigationBarItem
+  final List<BottomNavigationBarItem> _navItems = const [
+    BottomNavigationBarItem(
+      icon: Icon(Icons.home),
+      label: "Beranda",
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.inventory_2_outlined),
+      label: "Alat",
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.local_activity),
+      label: "Aktivitas",
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.settings),
+      label: "Pengaturan",
+    ),
   ];
 
   void _onItemTapped(int index) {
@@ -29,38 +51,20 @@ class _MainAdminScreenState extends State<MainAdminScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // pastikan index tidak lebih besar dari jumlah halaman
+    final int safeIndex = _selectedIndex.clamp(0, _pages.length - 1);
+
     return Scaffold(
-      body: _pages[_selectedIndex],
+      body: _pages[safeIndex],
 
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
+        currentIndex: safeIndex,
         onTap: _onItemTapped,
         type: BottomNavigationBarType.fixed,
         showUnselectedLabels: true,
         selectedItemColor: const Color(0xFF1F3D2B),
         unselectedItemColor: Colors.grey,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: "Beranda",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.inventory_2_outlined),
-            label: "Alat",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.local_activity),
-            label: "Aktivitas",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.people_outline),
-            label: "User",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: "Pengaturan",
-          ),
-        ],
+        items: _navItems,
       ),
     );
   }

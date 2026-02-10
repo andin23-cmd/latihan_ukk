@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class PesananScreen extends StatelessWidget {
-const PesananScreen({super.key});
+  final Map<String, dynamic> alat;
+  
+  const PesananScreen({super.key, required this.alat});
 
 @override
 Widget build(BuildContext context) {

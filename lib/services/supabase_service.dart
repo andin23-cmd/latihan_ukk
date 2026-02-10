@@ -9,7 +9,6 @@ class SupabaseService {
     String password,
   ) async {
     try {
-      // 1️⃣ LOGIN AUTH
       final res = await supabase.auth.signInWithPassword(
         email: email,
         password: password,
@@ -18,7 +17,6 @@ class SupabaseService {
       final user = res.user;
       if (user == null) return null;
 
-      // 2️⃣ AMBIL ROLE DARI TABEL USERS
       final data = await supabase
           .from('users')
           .select()
@@ -31,4 +29,50 @@ class SupabaseService {
       return null;
     }
   }
-} // angfay
+
+  // ================= GET ALAT + KATEGORI =================
+  Future<List<Map<String, dynamic>>> getAlat({
+    String? kategoriId,
+    String? search,
+  }) async {
+    try {
+      var query = supabase.from('alat').select('''
+        *,
+        kategori:kategori_id (
+          id,
+          nama_kategori
+        )
+      ''');
+
+      // ===== FILTER KATEGORI =====
+      if (kategoriId != null && kategoriId.isNotEmpty) {
+        query = query.eq('kategori_id', kategoriId);
+      }
+
+      // ===== SEARCH NAMA =====
+      if (search != null && search.isNotEmpty) {
+        query = query.ilike('nama_alat', '%$search%');
+      }
+
+      final data = await query;
+
+      return List<Map<String, dynamic>>.from(data);
+    } catch (e) {
+      print('ERROR GET ALAT: $e');
+      return [];
+    }
+  }
+
+  // ================= GET KATEGORI =================
+  Future<List<Map<String, dynamic>>> getKategori() async {
+    try {
+      final data =
+          await supabase.from('kategori').select();
+
+      return List<Map<String, dynamic>>.from(data);
+    } catch (e) {
+      print('ERROR GET KATEGORI: $e');
+      return [];
+    }
+  }
+}
